@@ -1,0 +1,40 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama": "Tooke coffee suka maju",
+        "Kategori": "UMKM",
+        "Alamat": "Jl. Suka Surya, Suka Maju, Kec. Medan Johor, Kota Medan, Sumatera Utara",
+        "Deskripsi": "Menjual kopi lokal dan olahan biji kopi.",
+        "LinkFoto": "https://i.imgur.com/yL35FKx.jpeg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.69058,
+          3.53349
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama": "Tooke Coffee Al-Falah",
+        "Kategori": "UMKM",
+        "Alamat": "Jl. Alfalah No.27, Harjosari II, Kec. Medan Johor, Kota Medan, Sumatera Utara 20217",
+        "Deskripsi": "Menjual kopi lokal dan olahan biji kopi",
+        "LinkFoto": "https://i.imgur.com/HZXn18v.jpeg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.69882,
+          3.54764
+        ]
+      }
+    }
+    
+  ]
+}

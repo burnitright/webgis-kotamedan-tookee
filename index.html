@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>WebGIS Wilayah Kota Medan Dan Tookee Coffee</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+    body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    h2 { text-align: center; background-color: #2f8f5b; color: white; padding: 10px 0; margin: 0; }
+    #map { height: 100vh; width: 100%; }
+    .leaflet-control-layers-expanded { font-size: 14px; }
+	.label-kecamatan {
+  color: #002f6c;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px #fff;
+  text-align: center;
+}
+.label-kelurahan {
+  color: #002f6c;
+  font-size: 10px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px #fff;
+  text-align: center;
+}
+  </style>
+</head>
+<body>
+  <h2>WebGIS Wilayah Kota Medan Dan Tookee Coffee</h2>
+  <div id="map"></div>
+
+  <script>
+    // --- Inisialisasi peta ---
+    var map = L.map('map').setView([3.5952, 98.6722], 11.5);
+
+    var baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // --- Deklarasi Layer Group ---
+    var layerKotaMedan = L.layerGroup();
+    var layerKecamatanMedan = L.layerGroup();
+    var layerKelurahanMedan = L.layerGroup();
+	var layerkopi = L.layerGroup();
+
+   
+    // ==============================
+    //  BATAS KOTA MEDAN
+    // ==============================
+    fetch('data/kota_medan.geojson')
+      .then(res => res.json())
+      .then(boundary => {
+        L.geoJSON(boundary, {
+          style: {
+            color: "#ff7800",
+            fillColor: "#ffd699",
+            fillOpacity: 0.15,
+            weight: 2
+          }
+        }).addTo(layerKotaMedan);
+      });
+
+    // ==============================
+    //  BATAS KECAMATAN MEDAN
+    // ==============================
+    fetch('data/kecamatan_medan.geojson')
+  .then(res => res.json())
+  .then(boundary => {
+    L.geoJSON(boundary, {
+      style: {
+        color: "#0055ff",
+        fillColor: "#aaccff",
+        fillOpacity: 0.1,
+        weight: 1.5
+      },
+      onEachFeature: function(feature, layer) {
+        // Tampilkan popup saat diklik
+        layer.bindPopup(`<b>Kecamatan:</b> ${feature.properties.nm_kecamatan}`);
+
+        // Tambahkan label nama kecamatan (tooltip permanen di tengah polygon)
+        var center = layer.getBounds().getCenter();
+        var label = L.marker(center, {
+          icon: L.divIcon({
+            className: 'label-kecamatan',
+            html: `<b>${feature.properties.nm_kecamatan}</b>`,
+            iconSize: [100, 20]
+          })
+        });
+        label.addTo(layerKecamatanMedan);
+      }
+    }).addTo(layerKecamatanMedan);
+  });
+
+    // ==============================
+    //  BATAS KELURAHAN MEDAN
+    // ==============================
+    fetch('data/kelurahan_medan.geojson')
+      .then(res => res.json())
+      .then(boundary => {
+        L.geoJSON(boundary, {
+          style: {
+            color: "#00aa55",
+            fillColor: "#aaffc3",
+            fillOpacity: 0.5,
+            weight: 1
+          },
+          onEachFeature: function(feature, layer) {
+            layer.bindPopup(`<b>Kelurahan:</b> ${feature.properties.nm_kelurahan}`);
+			
+			// Tambahkan label nama kelurahan (tooltip permanen di tengah polygon)
+        var center = layer.getBounds().getCenter();
+        var label = L.marker(center, {
+          icon: L.divIcon({
+            className: 'label-kelurahan',
+            html: `<b>${feature.properties.nm_kelurahan}</b>`,
+            iconSize: [100, 20]
+          })
+        });
+        label.addTo(layerKelurahanMedan);
+          }
+        }).addTo(layerKelurahanMedan);
+      });
+      
+	// --- Data kopi ---
+fetch('data/tookeecoffee.geojson')
+  .then(res => res.json())
+  .then(data => {
+    L.geoJSON(data, {
+	  pointToLayer: function(feature, latlng) {
+        return L.marker(latlng, {
+          icon: L.icon({
+            iconUrl: 'https://i.imgur.com/IwJaImI.jpeg',
+            iconSize: [25, 25]
+          })
+        }).bindPopup('<b>' + feature.properties.Nama + '</b><br>' +
+              'Kategori: ' + feature.properties.Kategori + '<br>' +
+              'Alamat: ' + feature.properties.Alamat + '<br>' +
+              '<img src="' + feature.properties.LinkFoto + '" width="150">' +
+              '<br>' + feature.properties.Deskripsi);
+      }
+    }).addTo(layerkopi);
+  });
+  
+	  
+	  
+    // ==============================
+    //  KONTROL LAYER
+    // ==============================
+    var baseMaps = {
+      "Peta Dasar (OpenStreetMap)": baseLayer
+    };
+
+    var overlayMaps = {
+      "Batas Kota Medan": layerKotaMedan,
+      "Batas Kecamatan Medan": layerKecamatanMedan,
+      "Batas Kelurahan Medan": layerKelurahanMedan,
+	  "Lokasi Tookee Coffee": layerkopi
+    };
+
+    L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(map);
+
+    // --- Aktifkan layer default ---
+    layerKotaMedan.addTo(map);
+  </script>
+</body>
+</html>

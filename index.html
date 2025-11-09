@@ -49,7 +49,7 @@
     // ==============================
     //  BATAS KOTA MEDAN
     // ==============================
-    fetch('data/kota_medan.geojson')
+    fetch('data/Kota_Medan.geojson')
       .then(res => res.json())
       .then(boundary => {
         L.geoJSON(boundary, {
@@ -162,8 +162,9 @@ fetch('data/tookeecoffee.geojson')
     L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(map);
 
     // --- Aktifkan layer default ---
-    layerKopi.addTo(map);
+    layerKotaMedan.addTo(map);
   </script>
 </body>
 </html>
+
 
